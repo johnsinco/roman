@@ -1,40 +1,27 @@
 class Integer
-   DIGITS = {
-    1 =>  'I',
-    5 =>  'V',
-    10 => 'X',
-    50 => 'L',
-    100 => 'C',
-    500 =>  'D',
-    1000 => 'M'
-  }
+  ARABIC = [ 1000, 500,  100,  50,   10,   5,    1]
+  ROMAN =  [ 'M', 'D', 'C', 'L', 'X', 'V', 'I' ]
 
-  def to_roman
-    working = self
-    DIGITS.keys.reverse.each_with_index.reduce('') do |converted, (arabic, idx)|
-      count = working / arabic
-      if(count == 0)
-        next_smaller = next_smaller_base10(idx)
-        if(next_smaller && next_smaller < working && (working + next_smaller) >= arabic)
-          converted += DIGITS[next_smaller]
-          count = 1
-          working = working - (arabic  - next_smaller)
-        end
+  def to_roman(index = 0)
+    index = 0 if index < 0
+    arabic, roman = ARABIC[index], ROMAN[index]
+    return '' unless arabic
+    if((count = (self/arabic)) == 0)
+      next_smaller_arabic, next_smaller_roman = next_smaller_base10(index)
+      if(next_smaller_arabic && (self + next_smaller_arabic)/arabic >= 1)
+        return next_smaller_roman + (self + next_smaller_arabic).to_roman(index - 1)
       else
-        working = working - arabic * count
+        return self.to_roman(index+1)
       end
-      next converted unless count > 0
-      converted += DIGITS[arabic] * count
-      converted
     end
+    return roman*count + (self-arabic*count).to_roman(index + 1)
   end
 
   def next_smaller_base10(idx)
-    next_digit = DIGITS.keys.reverse[idx+1]
-    return unless next_digit
+    return unless next_digit = ARABIC[idx+1]
     log10 = Math.log10(next_digit)
     if(log10 && log10 == log10.truncate)
-      return next_digit
+      return [ARABIC[idx+1], ROMAN[idx+1]]
     else
       return next_smaller_base10(idx+1)
     end
