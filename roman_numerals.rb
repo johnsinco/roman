@@ -1,5 +1,5 @@
-class Integer
-  ARABIC = [ 1000, 500,  100,  50,   10,   5,    1]
+class Integer #definiing class
+  ARABIC = [ 1000, 500,  100,  50,   10,   5,   1]
   ROMAN =  [ 'M', 'D', 'C', 'L', 'X', 'V', 'I' ]
 
   def to_roman(index = 0)
